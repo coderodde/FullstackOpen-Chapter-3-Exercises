@@ -30,6 +30,19 @@ app.get('/api/persons', (request, response) => {
     response.json(persons)
 })
 
+app.get('/api/persons/:id', (request, response) => {
+    const id = request.params.id
+    const person = persons.find(p => p.id === id)
+
+    if (person) {
+        response.send(`${person.name}, ${person.number}`)
+    } else {
+        response.status(404).json({
+            error: "Content missing!"
+        })
+    }
+})
+
 app.get('/info', (request, response) => {
     response.send(`Phonebook has info for ${persons.length} people <br/>${new Date()}`)
 })

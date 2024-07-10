@@ -47,6 +47,43 @@ app.get('/info', (request, response) => {
     response.send(`Phonebook has info for ${persons.length} people <br/>${new Date()}`)
 })
 
+app.post('/api/persons', (request, response) => {
+    const body = request.body
+
+    if (!body.name) {
+        return response.status(400).json({
+            error: "Name not specified."
+        })
+    }
+
+    if (!body.number) {
+        return response.status(400).json({
+            error: "Number not specified."
+        })
+    }
+
+    if (persons.find(p => p.name === body.name)) {
+        return response.status(400).json({
+            error: `${body.name} is already in the phonebook.`
+        })
+    }
+
+    const person = {
+        name: body.name,
+        number: body.number,
+        id: Math.floor(Math.random() * 100000000).toString()
+    }
+
+    persons = persons.concat(person)
+    response.json(person)
+})
+
+app.delete('/api/persons/:id', (request, response) => {
+    const id = request.params.id
+    persons = persons.filter(p => p.id !== id)
+    response.status(204).end()
+})
+
 const PORT = 3005
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`)

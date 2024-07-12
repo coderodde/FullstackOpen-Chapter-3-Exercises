@@ -8,7 +8,7 @@ const personSchema = new mongoose.Schema({
 const Person = mongoose.model('Person', personSchema)
 
 setupMongoose = () => {
-    const url = `mongodb+srv://coderodd3:${password}@fullstackopenmongodbclu.uw53f8u.mongodb.net/personApp?retryWrites=true&w=majority&appName=FullstackOpenMongoDBCluster`
+    const url = `mongodb+srv://coderodd3:${password}@fullstackopenmongodbclu.uw53f8u.mongodb.net/people?retryWrites=true&w=majority&appName=FullstackOpenMongoDBCluster`
     mongoose.set('strictQuery', false)
     mongoose.connect(url)
 }
@@ -29,7 +29,7 @@ addPerson = (name, number) => {
         number: number,
     })
 
-    person.save().then(result => {
+    person.save().then(result => {  
         console.log(`added ${result.name} number ${result.number} to phonebook`)
         mongoose.connection.close()
     })

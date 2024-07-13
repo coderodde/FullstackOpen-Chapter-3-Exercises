@@ -24,7 +24,7 @@ const errorHandler = (error, request, response, next) => {
 }
 
 const cors = require('cors');
-//const morgan = require('morgan')
+const morgan = require('morgan')
 
 app.use(cors())
 app.use(express.static('dist'))
@@ -35,11 +35,11 @@ const unknownEndpoint = (request, response) => {
     response.status(404).send({ error: "Unknown endpoint." })
 }
 
-// morgan.token('body', req => {
-//     return JSON.stringify(req.body)
-// }) 
+morgan.token('body', req => {
+    return JSON.stringify(req.body)
+}) 
 
-// app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body'))
+app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body'))
 
 app.get('/api/persons', (request, response, next) => {
     Person.find({}).then(persons => {
@@ -63,13 +63,36 @@ app.post('/api/persons', (request, response, next) => {
         })
     }
 
-    const person = new Person({
-        name: body.name,
-        number: body.number,
-    })
+    Person.find({ name: body.name })
+    .then(result => {
+        if (result.length === 0) {
+            // No previous person, can post one:
+            const person = new Person({
+                name: body.name,
+                number: body.number,
+            })
+        
+            person.save().then(savedPerson => {
+                response.json(savedPerson)
+            })
+            .catch(error => next(error))
+        } else {
+            const body = request.body
+    
+            const person = {
+                name: body.name,
+                number: body.number,
+            }
 
-    person.save().then(savedPerson => {
-        response.json(savedPerson)
+            // Get the person ID:
+            const personId = result[0]["_id"].toString()
+
+            Person.findByIdAndUpdate(personId, person, { new: true })
+            .then(updatedPerson => {
+                response.json(updatedPerson)
+            })
+            .catch(error => next(error))
+        }
     })
     .catch(error => next(error))
 })
@@ -103,6 +126,7 @@ app.delete('/api/persons/:id', (request, response, next ) => {
 
 app.put('/api/persons/:id', (request, response, next) => {
     const body = request.body
+    console.log("Body:", body)
     
     const person = {
         name: body.name,

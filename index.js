@@ -6,18 +6,28 @@ const app = express();
 const morgan = require('morgan')
 const cors = require('cors');
 
-const url = "mongodb+srv://coderodd3:Exp10r1ngM0ng0D8@fullstackopenmongodbclu.uw53f8u.mongodb.net/people?retryWrites=true&w=majority&appName=FullstackOpenMongoDBCluster"
+const Person = require('./models/person')
+
+//const url = "mongodb+srv://coderodd3:Exp10r1ngM0ng0D8@fullstackopenmongodbclu.uw53f8u.mongodb.net/people?retryWrites=true&w=majority&appName=FullstackOpenMongoDBCluster"
 // const Person = require('./models/person');
 
-mongoose.set('strictQuery', false)
-mongoose.connect(url)
+// mongoose.set('strictQuery', false)
+// mongoose.connect(url)
 
-const personSchema = new mongoose.Schema({
-    name: String,
-    number: String,
-})
+// const personSchema = new mongoose.Schema({
+//     name: String,
+//     number: String,
+// })
 
-const Person = mongoose.model('Person', personSchema)
+// const Person = mongoose.model('Person', personSchema)
+
+// personSchema.set('toJSON', {
+//     transform: (document, returnedObject) => {
+//         returnedObject.id = returnedObject._id.toString()
+//         delete returnedObject._id
+//         delete returnedObject.__v
+//     }
+// })
 
 app.use(cors())
 app.use(express.json())
@@ -38,16 +48,20 @@ app.get('/api/persons', (request, response) => {
 })
 
 app.get('/api/persons/:id', (request, response) => {
-    const id = request.params.id
-    const person = persons.find(p => p.id === id)
+    Person.findById(request.params.id).then(person => {
+        response.json(person)
+    })
 
-    if (person) {
-        response.send(`${person.name}, ${person.number}`)
-    } else {
-        response.status(404).json({
-            error: "Content missing!"
-        })
-    }
+    // const id = request.params.id
+    // const person = persons.find(p => p.id === id)
+
+    // if (person) {
+    //     response.send(`${person.name}, ${person.number}`)
+    // } else {
+    //     response.status(404).json({
+    //         error: "Content missing!"
+    //     })
+    // }
 })
 
 app.get('/info', (request, response) => {
@@ -75,14 +89,14 @@ app.post('/api/persons', (request, response) => {
         })
     }
 
-    const person = {
+    const person = new Person({
         name: body.name,
         number: body.number,
-        id: Math.floor(Math.random() * 100000000).toString()
-    }
+    })
 
-    persons = persons.concat(person)
-    response.json(person)
+    person.save().then(savedPerson => {
+        response.json(savedPerson)
+    })
 })
 
 app.delete('/api/persons/:id', (request, response) => {

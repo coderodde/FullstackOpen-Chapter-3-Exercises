@@ -2,13 +2,13 @@ const mongoose = require('mongoose')
 
 mongoose.set('strictQuery', false)
 
-const url = process.env.PERSON_MONGODB_URI
+const url = process.env.MONGODB_URI
 
 console.log("Connecting to", url)
 
 mongoose.connect(url)
     .then(result => {
-        console.log("Connected to the database!")
+        console.log("Connected to MongoDB!")
     }).catch((error) => {
         console.log("Could not connect to the database:", error.message)
     })

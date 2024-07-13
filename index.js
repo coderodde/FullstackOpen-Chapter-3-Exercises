@@ -1,10 +1,23 @@
 require('dotenv').config()
 
+const mongoose = require('mongoose')
 const express = require('express')
 const app = express();
 const morgan = require('morgan')
 const cors = require('cors');
-const Person = require('./models/person');
+
+const url = "mongodb+srv://coderodd3:Exp10r1ngM0ng0D8@fullstackopenmongodbclu.uw53f8u.mongodb.net/people?retryWrites=true&w=majority&appName=FullstackOpenMongoDBCluster"
+// const Person = require('./models/person');
+
+mongoose.set('strictQuery', false)
+mongoose.connect(url)
+
+const personSchema = new mongoose.Schema({
+    name: String,
+    number: String,
+})
+
+const Person = mongoose.model('Person', personSchema)
 
 app.use(cors())
 app.use(express.json())
@@ -19,10 +32,8 @@ app.use(morgan(':method :url :status :res[content-length] - :response-time ms :b
 let persons = []
 
 app.get('/api/persons', (request, response) => {
-    Person.find({}).then(result => {
-        result.forEach(note => {
-            console.log(note)
-        })
+    Person.find({}).then(persons => {
+        response.json(persons)
     })
 })
 

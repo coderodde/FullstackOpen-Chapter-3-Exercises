@@ -1,10 +1,10 @@
-const express = require('express')
-const app = express();
 require('dotenv').config()
+const express = require('express')
+const app = express()
 
 const Person = require('./models/person')
 
-const requestLogger = (request, response, next) => {
+const requestLogger =    (request, response, next) => {
     console.log("Method:", request.method)
     console.log("Path: :", request.path)
     console.log("Body  :", request.body)
@@ -18,6 +18,8 @@ const errorHandler = (error, request, response, next) => {
 
     if (error.name === "CastError") {
         return response.status(400).send({ error: "Malformed ID." })
+    } else if (error.name === "ValidationError") {
+        return response.status(400).json({ error: error.message })
     }
 
     next(error)
@@ -42,7 +44,8 @@ morgan.token('body', req => {
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body'))
 
 app.get('/api/persons', (request, response, next) => {
-    Person.find({}).then(persons => {
+    Person.find({})
+    .then(persons => {
         response.json(persons)
     })
     .catch(error => next(error))
@@ -87,7 +90,10 @@ app.post('/api/persons', (request, response, next) => {
             // Get the person ID:
             const personId = result[0]["_id"].toString()
 
-            Person.findByIdAndUpdate(personId, person, { new: true })
+            Person.findByIdAndUpdate(
+                personId, 
+                person, 
+                { new: true, runValidators: true, context: "query" })
             .then(updatedPerson => {
                 response.json(updatedPerson)
             })
@@ -133,7 +139,9 @@ app.put('/api/persons/:id', (request, response, next) => {
         number: body.number,
     }
 
-    Person.findByIdAndUpdate(request.params.id, person, { new: true })
+    Person.findByIdAndUpdate(request.params.id,
+                             person, 
+                             { new: true, runValidators: true, context: "query" })
     .then(updatedPerson => {
         response.json(updatedPerson)
     })
@@ -143,7 +151,7 @@ app.put('/api/persons/:id', (request, response, next) => {
 app.use(unknownEndpoint)
 app.use(errorHandler)
 
-const PORT = process.env.PORT || 3001
+const PORT = process.env.PORT
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}!`)
 })

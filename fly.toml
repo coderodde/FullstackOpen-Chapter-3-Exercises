@@ -1,15 +1,15 @@
-# fly.toml app configuration file generated for flopen-chapter-3-exercises-twilight-wildflower-3456 on 2024-07-11T11:43:07+03:00
+# fly.toml app configuration file generated for fso-rodde-phonebook on 2024-07-15T08:01:32+03:00
 #
 # See https://fly.io/docs/reference/configuration/ for information about how to use this file.
 #
 
-app = 'flopen-chapter-3-exercises-twilight-wildflower-3456'
+app = 'fso-rodde-phonebook'
 primary_region = 'arn'
 
 [build]
 
 [env]
-  PORT = "3000"
+  PORT = '3000'
 
 [http_service]
   internal_port = 3000

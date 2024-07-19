@@ -2,9 +2,7 @@ const mongoose = require('mongoose')
 
 mongoose.set('strictQuery', false)
 
-const url = process.env.MONGODB_URI
-
-console.log("Connecting to", url)
+const url = process.env.MONGODB_URI 
 
 mongoose.connect(url)
     .then(result => {
@@ -14,7 +12,11 @@ mongoose.connect(url)
     })
 
 const personSchema = new mongoose.Schema({
-    name: String,
+    name: {
+        type: String,
+        minlength: 3,
+        required: true
+    },
     number: String,
 })
 

@@ -54,19 +54,21 @@ app.get('/api/persons', (request, response, next) => {
 app.post('/api/persons', (request, response, next) => {
   const body = request.body
 
-  if (!body.name) {
-    return response.status(400).json({
-      error: 'Name not specified.'
-    })
-  }
+// <<<<<<< HEAD
+//   if (!body.name) {
+//     return response.status(400).json({
+//       error: 'Name not specified.'
+//     })
+//   }
 
-  if (!body.number) {
-    return response.status(400).json({
-      error: 'Number not specified.'
-    })
-  }
+//   if (!body.number) {
+//     return response.status(400).json({
+//       error: 'Number not specified.'
+//     })
+//   }
 
-  Person.find({ name: body.name })
+//   Person.find({ name: body.name })
+    Person.find({ name: body.name })
     .then(result => {
       if (result.length === 0) {
         // No previous person, can post one:

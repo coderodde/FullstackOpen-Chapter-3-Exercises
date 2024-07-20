@@ -74,7 +74,15 @@ app.post('/api/persons', (request, response, next) => {
                 name: body.name,
                 number: body.number,
             })
-        
+
+            const error = person.validateSync()
+            console.log("PHONE VALIDATION:", error)
+
+            if (error === undefined) {
+                console.log("Validation:", error)
+                response.status(400).json(error)
+            }
+
             person.save().then(savedPerson => {
                 response.json(savedPerson)
             })

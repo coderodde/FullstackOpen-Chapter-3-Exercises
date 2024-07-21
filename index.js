@@ -72,7 +72,7 @@ app.post('/api/persons', (request, response, next) => {
         person.save().then(savedPerson => {
           response.status(200).json(savedPerson)
         })
-        .catch(error => next(error))
+          .catch(error => next(error))
       } else {
         const body = request.body
 
@@ -103,7 +103,7 @@ app.get('/api/persons/:id', (request, response, next) => {
       response.json(person)
     } else {
       response.status(404).end()
-    }
+    }   
   })
     .catch(error => next(error))
 })

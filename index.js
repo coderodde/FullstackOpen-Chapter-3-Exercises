@@ -119,7 +119,7 @@ app.get('/info', (request, response, next) => {
 app.delete('/api/persons/:id', (request, response, next) => {
   Person.findByIdAndDelete(request.params.id)
     .then(result => {
-      response.status(204).end(result)
+      response.status(200).end(result)
     })
     .catch(error => next(error))
 })
